@@ -1,0 +1,62 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+    # 1. when we start skaffold apply these files
+    # 2. when we make change apply these files
+    # 3. when we stop skaffold, delete all the objects (clean cluster)
+      - ./infra/k8s/* # path to kubernetes directory with config files
+build:
+  local:
+    push: false # by default, would push to dockerhub. this disables it
+  artifacts:
+    - image: hurtindonkey/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js' # try and copy the js file directly into the pod. if no a .js file, rebuild image
+            dest: .
+    - image: hurtindonkey/comments
+      context: comments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # try and copy the js file directly into the pod. if no a .js file, rebuild image
+            dest: .
+    - image: hurtindonkey/event-bus
+      context: event-bus
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # try and copy the js file directly into the pod. if no a .js file, rebuild image
+            dest: .
+    - image: hurtindonkey/moderation
+      context: moderation
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # try and copy the js file directly into the pod. if no a .js file, rebuild image
+            dest: .    
+    - image: hurtindonkey/posts
+      context: posts
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # try and copy the js file directly into the pod. if no a .js file, rebuild image
+            dest: .                              
+    - image: hurtindonkey/query
+      context: query
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # try and copy the js file directly into the pod. if no a .js file, rebuild image
+            dest: .  
+                      
